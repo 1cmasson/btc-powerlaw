@@ -10,7 +10,7 @@ const testData = rawData.map((obj) => ({
 const App = () => {
     return (
         <div className="App">
-            <h1>Log-Log Chart</h1>
+            <h1>Bitcoin Power Law Chart</h1>
             <LogLogChart data={testData} />
         </div>
     );
