@@ -39,7 +39,8 @@ const LogLogChart = ({ data }) => {
           .attr("y", 0);
 
         const g = svg.append('g')
-          .attr('transform', `translate(${margin.left},${margin.top})`);
+          .attr('transform', `translate(${margin.left},${margin.top})`)
+          .attr('clip-path', 'url(#clip)');
 
         const xScale = d3.scaleLog()
           .domain(d3.extent(data, d => d.date.getTime()))
@@ -158,16 +159,16 @@ const LogLogChart = ({ data }) => {
             }
 
             const nearestX = xScale(d.date.getTime());
-            const nearestY = yScale(d.price);
 
             const trendLinePoint = trendLineData.find(td => td.date.getTime() === d.date.getTime());
             const trendLinePrice = trendLinePoint ? trendLinePoint.price : 0;
+            const nearestY = yScale(trendLinePrice);
 
             const deviations = [
               { label: "+100%", value: trendLinePrice * 2, color: 'green' },
               { label: "+50%", value: trendLinePrice * 1.5, color: 'orange' },
-              { label: "Price", value: Math.floor(d.price * 100)/100, color: "black" },
-              { label: "Power Law", value: Math.floor(trendLinePrice * 100)/100, color: "red" },
+              { label: "Price", value: Math.floor(d.price * 100) / 100, color: "black" },
+              { label: "Power Law", value: Math.floor(trendLinePrice * 100) / 100, color: "red" },
               { label: "-25%", value: trendLinePrice * 0.75, color: 'purple' },
               { label: "-50%", value: trendLinePrice * 0.5, color: 'blue' },
             ];
@@ -198,8 +199,17 @@ const LogLogChart = ({ data }) => {
                 .text(d => d));
 
             const { x: bboxX, y: bboxY, width: bboxWidth, height: bboxHeight } = text.node().getBBox();
-            text.attr("transform", `translate(${-bboxWidth / 2},${15 - bboxY})`);
-            path.attr("d", `M${-bboxWidth / 2 - 10},5H-5l5,-5l5,5H${bboxWidth / 2 + 10}v${bboxHeight + 20}h-${bboxWidth + 20}z`);
+            const tooltipXOffset = -bboxWidth / 2;
+            const tooltipYOffset = nearestX < innerWidth / 2 ? -bboxHeight - 13 : 3;
+            const textYOffset = nearestX < innerWidth / 2 ? -5 : 15;
+            const pathD = nearestX < innerWidth / 2
+              ? `M${-bboxWidth / 2 - 10},${bboxHeight + 5}H-5l5,5l5,-5H${bboxWidth / 2 + 10}v${-bboxHeight - 20}h-${bboxWidth + 20}z`
+              : `M${-bboxWidth / 2 - 10},5H-5l5,-5l5,5H${bboxWidth / 2 + 10}v${bboxHeight + 20}h-${bboxWidth + 20}z`;
+
+            text.attr("transform", `translate(${tooltipXOffset},${textYOffset - bboxY})`);
+            path.attr("d", pathD);
+
+            tooltip.attr("transform", `translate(${nearestX},${nearestY + tooltipYOffset})`);
 
             verticalLine.style("visibility", "visible")
               .attr("x1", nearestX).attr("x2", nearestX);
@@ -249,7 +259,7 @@ const LogLogChart = ({ data }) => {
             .attr('clip-path', 'url(#clip)')  // Apply the clip path
             .attr('fill', 'none')
             .attr('stroke', 'red')
-            .attr('stroke-width', 1.5)
+            .attr('stroke-width', 2)
             .attr('d', trendLine);
 
           const addDeviationLine = (deviation, color) => {
@@ -263,8 +273,8 @@ const LogLogChart = ({ data }) => {
               .attr('clip-path', 'url(#clip)')  // Apply the clip path
               .attr('fill', 'none')
               .attr('stroke', color)
-              .attr('stroke-width', 1.5)
-              .attr('stroke-dasharray', '5,5')
+              .attr('stroke-width', 2.5 )
+              .attr('stroke-dasharray', '15')
               .attr('d', trendLine);
           };
 
