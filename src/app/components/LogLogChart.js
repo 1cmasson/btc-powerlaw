@@ -8,12 +8,22 @@ const LogLogChart = ({ data }) => {
     const wrapperRef = useRef(null);
     const tooltipInterval = 3; // Adjust this variable to change the interval
 
+    const getDimensions = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 640) {
+          return { width: 300, height: 200 }; // Small screens (e.g., phones)
+      } else if (screenWidth < 1024) {
+          return { width: 600, height: 400 }; // Medium screens (e.g., tablets)
+      } else {
+          return { width: 900, height: 600 }; // Large screens (e.g., desktops)
+      }
+    };
+
     useEffect(() => {
       if (!svgRef.current || !wrapperRef.current) return;
 
       const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-      const width = 800; // Fixed width
-      const height = 400; // Fixed height
+      const { width, height } = getDimensions();
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
 
