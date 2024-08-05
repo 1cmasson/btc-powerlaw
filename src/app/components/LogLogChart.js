@@ -12,7 +12,7 @@ const LogLogChart = ({ data }) => {
       const screenWidth = window.innerWidth;
       if (screenWidth < 640) {
           return { width: 400, height: 700 }; // Small screens (e.g., phones)
-      } else if (screenWidth < 1024) {
+      } else if (screenWidth < 768) {
           return { width: 600, height: 400 }; // Medium screens (e.g., tablets)
       } else {
           return { width: 1300, height: 500 }; // Large screens (e.g., desktops)
@@ -232,9 +232,10 @@ const LogLogChart = ({ data }) => {
                   .attr("y1", nearestY).attr("y2", nearestY);
 
               updateStaticBox(d);
+              event.preventDefault();
           };
 
-          svg.on("mousemove touchmove", updateTooltip)
+          svg.on("mousemove touchmove touchstart mousestart", updateTooltip)
               .on("pointerenter pointermove", updateTooltip)
               .on("mouseout touchend", () => {
                   // Keep the lines and tooltip visible
