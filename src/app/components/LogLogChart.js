@@ -11,18 +11,18 @@ const LogLogChart = ({ data }) => {
     const getDimensions = () => {
       const screenWidth = window.innerWidth;
       if (screenWidth < 640) {
-          return { width: 300, height: 200 }; // Small screens (e.g., phones)
+          return { width: 400, height: 700 }; // Small screens (e.g., phones)
       } else if (screenWidth < 1024) {
           return { width: 600, height: 400 }; // Medium screens (e.g., tablets)
       } else {
-          return { width: 900, height: 600 }; // Large screens (e.g., desktops)
+          return { width: 1300, height: 500 }; // Large screens (e.g., desktops)
       }
     };
 
     useEffect(() => {
       if (!svgRef.current || !wrapperRef.current) return;
 
-      const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+      const margin = { top: 20, right: 30, bottom: 40, left: 10 };
       const { width, height } = getDimensions();
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
